@@ -3,7 +3,7 @@ title: GA4 Data Layer
 module: Hryvinskyi_DataLayer
 doc-type: User Guide
 lede: GA4 ecommerce tracking for Magento 2 through Google Tag Manager or gtag.js, with optional server-side delivery and a guided setup wizard.
-version: 1.0.2
+version: 1.0.3
 magento: 2.4.8
 php: 8.3
 published: 2026-10-20
@@ -83,7 +83,7 @@ All modules require PHP 8.3 or 8.4. The three server-side modules go together.
 
    Add `hryvinskyi/magento2-data-layer-server-side`, `-server-side-frontend-ui` and `-server-side-admin-ui` for server delivery.
 2. Run `bin/magento setup:upgrade` (this also runs the settings migration), `bin/magento setup:di:compile` and, in production mode, `bin/magento setup:static-content:deploy`.
-3. Flush the caches, including **Full Page Cache**. Pages cached before the installation have no loader and no data layer.
+3. Flush the caches, including **Page Cache**. Pages cached before the installation have no loader and no data layer.
 4. Make sure the server's cron runs, including the `hryvinskyi_datalayer` cron group when server delivery is used.
 
 **Theme requirement.** The loader, the page events and the scripts are printed into `<head>` through Head Tag Manager. A theme that removes Head Tag Manager's head output loses all of them without an error.
@@ -94,7 +94,7 @@ Disable an optional module with `bin/magento module:disable <Module>` followed b
 
 ### Caches after a settings change
 
-Saving the section, on the settings page or with **Save all** in the wizard, cleans the module's own cached data (list data and category trees) and marks **Full Page Cache** as invalidated. It does not clean the full-page cache behind your back, because cached pages carry the list data and settings they were rendered with. Refresh *Full Page Cache* under **System › Cache Management** when the change should show at once.
+Saving the section, on the settings page or with **Save all** in the wizard, cleans the module's own cached data (list data and category trees) and marks **Page Cache** as invalidated. It does not clean the full-page cache behind your back, because cached pages carry the list data and settings they were rendered with. Refresh *Page Cache* under **System › Cache Management** when the change should show at once.
 
 ---
 
@@ -507,7 +507,7 @@ This step is present when the server-side modules are installed. *"Sends selecte
 
 ![Step 5: server-side delivery switched off](images/wizard-step5-server-off.png)
 
-![Step 5: Measurement Protocol with a valid test event](images/wizard-step5-server-side.png)
+![Step 5: server-side delivery through the Measurement Protocol](images/wizard-step5-server-side.png)
 
 | Card | Setting | What it does |
 | --- | --- | --- |
@@ -739,7 +739,7 @@ A setting that a module places in another configuration section is shown and sav
 6. **Test with GTM Preview** (Tag Assistant): browse a category, open a product, add to cart, go through checkout and **place a test order**. Check each event and its `ecommerce` object.
 7. **Submit and publish** the container.
 8. **Server delivery (optional):** create a Measurement Protocol API secret, enter it with the measurement ID per website, press **Send test event**, then route the chosen events (typically `purchase`) to Server. Check the delivery status after the first orders. Make sure debug mode is off.
-9. **Switch tracking on** (*General › Enabled*) and **refresh Full Page Cache**.
+9. **Switch tracking on** (*General › Enabled*) and **refresh Page Cache**.
 10. **Grant permissions**: the GA4 Data Layer resource to whoever maintains tracking, and *Server-side delivery actions* only to those who should send test events or retry deliveries.
 
 ---
@@ -751,7 +751,7 @@ A setting that a module places in another configuration section is shown and sav
 - Neither a container ID nor a measurement ID is set: events are pushed, but no Google script loads.
 - The container ID is lower-case or has spaces: it must be `GTM-` followed by capital letters and digits.
 - The theme does not render Head Tag Manager's head output, so nothing reaches `<head>`.
-- Full Page Cache was not refreshed after installing or changing settings.
+- Page Cache was not refreshed after installing or changing settings.
 - The event is switched off in the events table.
 
 **Every event is counted twice.**
@@ -782,7 +782,7 @@ A setting that a module places in another configuration section is shown and sav
 
 **Save all is greyed out or refuses to save.** Either there is nothing to save, or a step has a problem at a scope you changed: the review step lists which steps to fix.
 
-**I changed something in the wizard but the storefront did not change.** Nothing is stored until **Save all**. After saving, refresh Full Page Cache.
+**I changed something in the wizard but the storefront did not change.** Nothing is stored until **Save all**. After saving, refresh Page Cache.
 
 **Can I use the settings page and the wizard together?** Yes. They read and write the same settings. Saving in one is visible in the other on its next load.
 
