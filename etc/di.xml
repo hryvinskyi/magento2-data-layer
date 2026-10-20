@@ -1,0 +1,582 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2026. Volodymyr Hryvinskyi. All rights reserved.
+ * Author: Volodymyr Hryvinskyi <volodymyr@hryvinskyi.com>
+ * GitHub: https://github.com/hryvinskyi
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Published contracts -->
+    <preference for="Hryvinskyi\DataLayerApi\Api\Data\ItemInterface" type="Hryvinskyi\DataLayer\Model\Data\Item"/>
+    <preference for="Hryvinskyi\DataLayerApi\Api\Data\EventInterface" type="Hryvinskyi\DataLayer\Model\Data\Event"/>
+    <preference for="Hryvinskyi\DataLayerApi\Api\Data\ItemSubjectInterface"
+                type="Hryvinskyi\DataLayer\Model\Data\ItemSubject"/>
+    <preference for="Hryvinskyi\DataLayerApi\Api\Data\PromotionInterface"
+                type="Hryvinskyi\DataLayer\Model\Data\Promotion"/>
+    <preference for="Hryvinskyi\DataLayerApi\Api\Data\VisitorContextInterface"
+                type="Hryvinskyi\DataLayer\Model\Data\VisitorContext"/>
+    <preference for="Hryvinskyi\DataLayerApi\Api\EventAvailabilityInterface"
+                type="Hryvinskyi\DataLayer\Model\EventAvailability"/>
+    <preference for="Hryvinskyi\DataLayerApi\Api\PriceVisibilityInterface"
+                type="Hryvinskyi\DataLayer\Model\PriceVisibility"/>
+    <preference for="Hryvinskyi\DataLayerApi\Api\CartTrackingPolicyInterface"
+                type="Hryvinskyi\DataLayer\Model\CartTrackingPolicy"/>
+    <preference for="Hryvinskyi\DataLayerApi\Api\EventChannelPolicyInterface"
+                type="Hryvinskyi\DataLayer\Model\EventChannelPolicy"/>
+    <preference for="Hryvinskyi\DataLayerApi\Api\EventDispatcherInterface"
+                type="Hryvinskyi\DataLayer\Model\EventDispatcher"/>
+    <preference for="Hryvinskyi\DataLayerApi\Api\VisitorContextProviderInterface"
+                type="Hryvinskyi\DataLayer\Model\NoVisitorContext"/>
+
+    <!-- This module's own contracts -->
+    <preference for="Hryvinskyi\DataLayer\Api\ConfigInterface" type="Hryvinskyi\DataLayer\Model\Config"/>
+    <preference for="Hryvinskyi\DataLayer\Api\KnownEventsInterface" type="Hryvinskyi\DataLayer\Model\KnownEvents"/>
+    <!-- Browser events forwarded to the server sinks: the dispatcher, which holds the sinks -->
+    <preference for="Hryvinskyi\DataLayer\Api\BrowserEventForwarderInterface"
+                type="Hryvinskyi\DataLayer\Model\EventDispatcher"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Data\KnownEventInterface"
+                type="Hryvinskyi\DataLayer\Model\Data\KnownEvent"/>
+    <preference for="Hryvinskyi\DataLayer\Api\EventModifierPipelineInterface"
+                type="Hryvinskyi\DataLayer\Model\EventModifierPipeline"/>
+
+    <!-- Fixed event channels: a module whose event can happen on one side only registers that side in `channels` -->
+    <preference for="Hryvinskyi\DataLayer\Api\FixedChannelsInterface" type="Hryvinskyi\DataLayer\Model\FixedChannels"/>
+
+    <!-- Known events: each with its admin label and, for the admin's event list, its group, what triggers it,
+         where it comes from and an optional hint. `browserOriginated` marks the events the shopper's browser detects
+         (Page, List, Click): only those may be posted by a browser to the server; what the server detects is marked
+         Server or Order and never is. `groupCode` and `sourceCode` name the group and the source in words that do not
+         change with the admin's language. A module that adds an event registers it the same way. -->
+    <type name="Hryvinskyi\DataLayer\Model\KnownEvents">
+        <arguments>
+            <argument name="events" xsi:type="array">
+                <item name="view_item_list" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">View item list</item>
+                    <item name="group" xsi:type="string" translate="true">Browsing</item>
+                    <item name="groupCode" xsi:type="string">browsing</item>
+                    <item name="trigger" xsi:type="string" translate="true">Product list viewed</item>
+                    <item name="source" xsi:type="string" translate="true">List</item>
+                    <item name="sourceCode" xsi:type="string">list</item>
+                    <item name="browserOriginated" xsi:type="boolean">true</item>
+                </item>
+                <item name="select_item" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Select item</item>
+                    <item name="group" xsi:type="string" translate="true">Browsing</item>
+                    <item name="groupCode" xsi:type="string">browsing</item>
+                    <item name="trigger" xsi:type="string" translate="true">Product clicked in a list</item>
+                    <item name="source" xsi:type="string" translate="true">Click</item>
+                    <item name="sourceCode" xsi:type="string">click</item>
+                    <item name="browserOriginated" xsi:type="boolean">true</item>
+                </item>
+                <item name="view_item" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">View item</item>
+                    <item name="group" xsi:type="string" translate="true">Browsing</item>
+                    <item name="groupCode" xsi:type="string">browsing</item>
+                    <item name="trigger" xsi:type="string" translate="true">Product page viewed</item>
+                    <item name="source" xsi:type="string" translate="true">Page</item>
+                    <item name="sourceCode" xsi:type="string">page</item>
+                    <item name="browserOriginated" xsi:type="boolean">true</item>
+                </item>
+                <item name="view_promotion" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">View promotion</item>
+                    <item name="group" xsi:type="string" translate="true">Browsing</item>
+                    <item name="groupCode" xsi:type="string">browsing</item>
+                    <item name="trigger" xsi:type="string" translate="true">Promotion banner viewed</item>
+                    <item name="source" xsi:type="string" translate="true">List</item>
+                    <item name="sourceCode" xsi:type="string">list</item>
+                    <item name="browserOriginated" xsi:type="boolean">true</item>
+                </item>
+                <item name="select_promotion" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Select promotion</item>
+                    <item name="group" xsi:type="string" translate="true">Browsing</item>
+                    <item name="groupCode" xsi:type="string">browsing</item>
+                    <item name="trigger" xsi:type="string" translate="true">Promotion banner clicked</item>
+                    <item name="source" xsi:type="string" translate="true">Click</item>
+                    <item name="sourceCode" xsi:type="string">click</item>
+                    <item name="browserOriginated" xsi:type="boolean">true</item>
+                </item>
+                <item name="add_to_wishlist" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Add to wishlist</item>
+                    <item name="group" xsi:type="string" translate="true">Browsing</item>
+                    <item name="groupCode" xsi:type="string">browsing</item>
+                    <item name="trigger" xsi:type="string" translate="true">Product added to the wish list</item>
+                    <item name="source" xsi:type="string" translate="true">Server</item>
+                    <item name="sourceCode" xsi:type="string">server</item>
+                </item>
+                <item name="add_to_cart" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Add to cart</item>
+                    <item name="group" xsi:type="string" translate="true">Cart</item>
+                    <item name="groupCode" xsi:type="string">cart</item>
+                    <item name="trigger" xsi:type="string" translate="true">Product added to cart</item>
+                    <item name="source" xsi:type="string" translate="true">Server</item>
+                    <item name="sourceCode" xsi:type="string">server</item>
+                </item>
+                <item name="remove_from_cart" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Remove from cart</item>
+                    <item name="group" xsi:type="string" translate="true">Cart</item>
+                    <item name="groupCode" xsi:type="string">cart</item>
+                    <item name="trigger" xsi:type="string" translate="true">Product removed from cart</item>
+                    <item name="source" xsi:type="string" translate="true">Server</item>
+                    <item name="sourceCode" xsi:type="string">server</item>
+                </item>
+                <item name="view_cart" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">View cart</item>
+                    <item name="group" xsi:type="string" translate="true">Cart</item>
+                    <item name="groupCode" xsi:type="string">cart</item>
+                    <item name="trigger" xsi:type="string" translate="true">Cart page viewed</item>
+                    <item name="source" xsi:type="string" translate="true">Page</item>
+                    <item name="sourceCode" xsi:type="string">page</item>
+                    <item name="browserOriginated" xsi:type="boolean">true</item>
+                </item>
+                <item name="begin_checkout" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Begin checkout</item>
+                    <item name="group" xsi:type="string" translate="true">Checkout</item>
+                    <item name="groupCode" xsi:type="string">checkout</item>
+                    <item name="trigger" xsi:type="string" translate="true">Checkout opened</item>
+                    <item name="source" xsi:type="string" translate="true">Page</item>
+                    <item name="sourceCode" xsi:type="string">page</item>
+                    <item name="browserOriginated" xsi:type="boolean">true</item>
+                </item>
+                <item name="add_shipping_info" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Add shipping info</item>
+                    <item name="group" xsi:type="string" translate="true">Checkout</item>
+                    <item name="groupCode" xsi:type="string">checkout</item>
+                    <item name="trigger" xsi:type="string" translate="true">Shipping method chosen</item>
+                    <item name="source" xsi:type="string" translate="true">Server</item>
+                    <item name="sourceCode" xsi:type="string">server</item>
+                </item>
+                <item name="add_payment_info" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Add payment info</item>
+                    <item name="group" xsi:type="string" translate="true">Checkout</item>
+                    <item name="groupCode" xsi:type="string">checkout</item>
+                    <item name="trigger" xsi:type="string" translate="true">Payment method chosen</item>
+                    <item name="source" xsi:type="string" translate="true">Server</item>
+                    <item name="sourceCode" xsi:type="string">server</item>
+                </item>
+                <item name="purchase" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Purchase</item>
+                    <item name="group" xsi:type="string" translate="true">Checkout</item>
+                    <item name="groupCode" xsi:type="string">checkout</item>
+                    <item name="trigger" xsi:type="string" translate="true">Order placed</item>
+                    <item name="source" xsi:type="string" translate="true">Order</item>
+                    <item name="sourceCode" xsi:type="string">order</item>
+                    <item name="hint" xsi:type="string" translate="true">Server = sent when the order is placed or paid; Browser = success page</item>
+                </item>
+                <item name="ads_conversion" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Google Ads conversion</item>
+                    <item name="group" xsi:type="string" translate="true">Checkout</item>
+                    <item name="groupCode" xsi:type="string">checkout</item>
+                    <item name="trigger" xsi:type="string" translate="true">Order placed (success page)</item>
+                    <item name="source" xsi:type="string" translate="true">Order</item>
+                    <item name="sourceCode" xsi:type="string">order</item>
+                </item>
+                <item name="login" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Login</item>
+                    <item name="group" xsi:type="string" translate="true">Account</item>
+                    <item name="groupCode" xsi:type="string">account</item>
+                    <item name="trigger" xsi:type="string" translate="true">Customer logged in</item>
+                    <item name="source" xsi:type="string" translate="true">Server</item>
+                    <item name="sourceCode" xsi:type="string">server</item>
+                </item>
+                <item name="sign_up" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Sign up</item>
+                    <item name="group" xsi:type="string" translate="true">Account</item>
+                    <item name="groupCode" xsi:type="string">account</item>
+                    <item name="trigger" xsi:type="string" translate="true">Account created</item>
+                    <item name="source" xsi:type="string" translate="true">Server</item>
+                    <item name="sourceCode" xsi:type="string">server</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Event presets: named event selections a store switches on in one step. A module registers a preset of its own
+         as an item of `presets`, or adds an event to another module's preset by merging one item, keyed by the event
+         name, into that preset's `events`. Only known events are selected. -->
+    <preference for="Hryvinskyi\DataLayer\Api\EventPresetsInterface" type="Hryvinskyi\DataLayer\Model\EventPresets"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Data\EventPresetInterface"
+                type="Hryvinskyi\DataLayer\Model\Data\EventPreset"/>
+    <type name="Hryvinskyi\DataLayer\Model\EventPresets">
+        <arguments>
+            <argument name="presets" xsi:type="array">
+                <item name="standard" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Standard online shop</item>
+                    <item name="description" xsi:type="string" translate="true">Product views, lists, promotions, cart, checkout steps and purchase.</item>
+                    <item name="sortOrder" xsi:type="number">10</item>
+                    <item name="icon" xsi:type="string">storefront</item>
+                    <item name="events" xsi:type="array">
+                        <item name="view_item_list" xsi:type="string">view_item_list</item>
+                        <item name="select_item" xsi:type="string">select_item</item>
+                        <item name="view_item" xsi:type="string">view_item</item>
+                        <item name="view_promotion" xsi:type="string">view_promotion</item>
+                        <item name="select_promotion" xsi:type="string">select_promotion</item>
+                        <item name="add_to_wishlist" xsi:type="string">add_to_wishlist</item>
+                        <item name="add_to_cart" xsi:type="string">add_to_cart</item>
+                        <item name="remove_from_cart" xsi:type="string">remove_from_cart</item>
+                        <item name="view_cart" xsi:type="string">view_cart</item>
+                        <item name="begin_checkout" xsi:type="string">begin_checkout</item>
+                        <item name="add_shipping_info" xsi:type="string">add_shipping_info</item>
+                        <item name="add_payment_info" xsi:type="string">add_payment_info</item>
+                        <item name="purchase" xsi:type="string">purchase</item>
+                        <item name="ads_conversion" xsi:type="string">ads_conversion</item>
+                        <item name="login" xsi:type="string">login</item>
+                        <item name="sign_up" xsi:type="string">sign_up</item>
+                    </item>
+                </item>
+                <item name="minimal" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Minimal</item>
+                    <item name="description" xsi:type="string" translate="true">Product views and purchase only.</item>
+                    <item name="sortOrder" xsi:type="number">30</item>
+                    <item name="icon" xsi:type="string">bolt</item>
+                    <item name="events" xsi:type="array">
+                        <item name="view_item" xsi:type="string">view_item</item>
+                        <item name="purchase" xsi:type="string">purchase</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- End of event presets -->
+
+    <!-- Request-scoped overrides: one shared instance per seam, so the reader sees what the work was given.
+         Unsaved settings drafted for a preview or a test event, and a forced price-visibility answer. -->
+    <preference for="Hryvinskyi\DataLayer\Api\Config\DraftSettingsInterface"
+                type="Hryvinskyi\DataLayer\Model\Config\DraftSettings"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Config\DraftSettingReaderInterface"
+                type="Hryvinskyi\DataLayer\Model\Config\DraftSettings"/>
+    <preference for="Hryvinskyi\DataLayer\Api\PriceVisibilityOverrideInterface"
+                type="Hryvinskyi\DataLayer\Model\PriceVisibilityOverride"/>
+    <preference for="Hryvinskyi\DataLayer\Api\PriceVisibilityOverrideReaderInterface"
+                type="Hryvinskyi\DataLayer\Model\PriceVisibilityOverride"/>
+    <!-- End of request-scoped overrides -->
+
+    <!-- The browser queue lives in the visitor's session: built only when an event is queued -->
+    <type name="Hryvinskyi\DataLayer\Model\EventDispatcher">
+        <arguments>
+            <argument name="queue" xsi:type="object">Hryvinskyi\DataLayerApi\Api\ServerEventQueueInterface\Proxy</argument>
+            <argument name="sinks" xsi:type="array"/>
+        </arguments>
+    </type>
+
+    <!-- The data layer's own session namespace, for what it keeps per visitor between requests -->
+    <virtualType name="HryvinskyiDataLayerSessionStorageData" type="Magento\Framework\Session\Storage">
+        <arguments>
+            <argument name="namespace" xsi:type="string">hryvinskyi_datalayer</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="HryvinskyiDataLayerSessionStorage" type="Magento\Framework\Session\Generic">
+        <arguments>
+            <argument name="storage" xsi:type="object">HryvinskyiDataLayerSessionStorageData</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Catalogue reads behind item fields: one query per concern for all products of an event.
+         The category tree port resolves to its cache, which reads the database only on a miss. -->
+    <preference for="Hryvinskyi\DataLayer\Api\Catalog\CategoryPathReaderInterface"
+                type="Hryvinskyi\DataLayer\Model\Catalog\CategoryPathReader"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Catalog\AttributeValueReaderInterface"
+                type="Hryvinskyi\DataLayer\Model\Catalog\AttributeValueReader"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Catalog\OptionLabelReaderInterface"
+                type="Hryvinskyi\DataLayer\Model\Catalog\OptionLabelReader"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Catalog\CategoryTreeSnapshotInterface"
+                type="Hryvinskyi\DataLayer\Model\Catalog\CachedCategoryTreeSnapshot"/>
+    <!-- Same class, so the shared instance whose in-request trees the observer empties is the one readers ask -->
+    <preference for="Hryvinskyi\DataLayer\Api\Catalog\CategoryTreeInvalidatorInterface"
+                type="Hryvinskyi\DataLayer\Model\Catalog\CachedCategoryTreeSnapshot"/>
+    <!-- Everything cached at once, for a change that affects it all (the settings) -->
+    <preference for="Hryvinskyi\DataLayer\Api\CachedDataCleanerInterface"
+                type="Hryvinskyi\DataLayer\Model\CachedDataCleaner"/>
+    <type name="Hryvinskyi\DataLayer\Model\Catalog\CachedCategoryTreeSnapshot">
+        <arguments>
+            <argument name="inner" xsi:type="object">Hryvinskyi\DataLayer\Model\Catalog\DbCategoryTreeSnapshot</argument>
+            <argument name="serializer" xsi:type="object">Magento\Framework\Serialize\Serializer\Json</argument>
+        </arguments>
+    </type>
+    <!-- End of catalogue reads -->
+
+    <!-- Item pipeline: item field providers run in sortOrder (10 … 80), a later provider's parameter replaces an
+         earlier one's, so another module places its provider by number. Product-type strategies are keyed by type id,
+         with a default for every other type. -->
+    <preference for="Hryvinskyi\DataLayerApi\Api\ItemBuilderInterface" type="Hryvinskyi\DataLayer\Model\ItemBuilder"/>
+    <preference for="Hryvinskyi\DataLayer\Api\HiddenPricePolicyInterface"
+                type="Hryvinskyi\DataLayer\Model\HiddenPricePolicy"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Product\CataloguePriceResolverInterface"
+                type="Hryvinskyi\DataLayer\Model\Product\CataloguePriceResolver"/>
+    <!-- Catalogue prices on the requested tax basis and for a quantity (tier prices), shared by the price strategies -->
+    <preference for="Hryvinskyi\DataLayer\Api\Product\TaxBasisPriceInterface"
+                type="Hryvinskyi\DataLayer\Model\Product\Price\TaxBasisPrice"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Product\QuantityPriceInfoInterface"
+                type="Hryvinskyi\DataLayer\Model\Product\Price\QuantityPriceInfo"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Product\LineVariantResolverInterface"
+                type="Hryvinskyi\DataLayer\Model\Product\LineVariantResolver"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Product\ChosenOptionsInterface"
+                type="Hryvinskyi\DataLayer\Model\Product\Variant\ChosenOptions"/>
+    <preference for="Hryvinskyi\DataLayer\Api\ItemField\ProductAttributeValuesInterface"
+                type="Hryvinskyi\DataLayer\Model\ItemField\ProductAttributeValues"/>
+    <preference for="Hryvinskyi\DataLayer\Api\ItemField\LineFiguresInterface"
+                type="Hryvinskyi\DataLayer\Model\ItemField\LineFigures"/>
+    <type name="Hryvinskyi\DataLayer\Model\ItemBuilder">
+        <arguments>
+            <argument name="providers" xsi:type="array">
+                <item name="identity" xsi:type="object" sortOrder="10">Hryvinskyi\DataLayer\Model\ItemField\IdentityProvider</item>
+                <item name="price" xsi:type="object" sortOrder="20">Hryvinskyi\DataLayer\Model\ItemField\PriceProvider</item>
+                <item name="quantity" xsi:type="object" sortOrder="30">Hryvinskyi\DataLayer\Model\ItemField\QuantityProvider</item>
+                <item name="variant" xsi:type="object" sortOrder="40">Hryvinskyi\DataLayer\Model\ItemField\VariantProvider</item>
+                <item name="brand" xsi:type="object" sortOrder="50">Hryvinskyi\DataLayer\Model\ItemField\BrandProvider</item>
+                <item name="category" xsi:type="object" sortOrder="60">Hryvinskyi\DataLayer\Model\ItemField\CategoryProvider</item>
+                <item name="list" xsi:type="object" sortOrder="70">Hryvinskyi\DataLayer\Model\ItemField\ListProvider</item>
+                <item name="line" xsi:type="object" sortOrder="80">Hryvinskyi\DataLayer\Model\ItemField\LineProvider</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Hryvinskyi\DataLayer\Model\Product\CataloguePriceResolver">
+        <arguments>
+            <argument name="strategies" xsi:type="array">
+                <item name="default" xsi:type="object">Hryvinskyi\DataLayer\Model\Product\Price\FinalPriceAmount</item>
+                <item name="grouped" xsi:type="object">Hryvinskyi\DataLayer\Model\Product\Price\LowestAssociatedAmount</item>
+                <item name="bundle" xsi:type="object">Hryvinskyi\DataLayer\Model\Product\Price\MinimalFinalAmount</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="HryvinskyiDataLayerConfigurableVariant"
+                 type="Hryvinskyi\DataLayer\Model\Product\Variant\OptionsVariant">
+        <arguments>
+            <argument name="orderGroups" xsi:type="array">
+                <item name="attributes" xsi:type="string">attributes_info</item>
+                <item name="options" xsi:type="string">options</item>
+                <item name="additional" xsi:type="string">additional_options</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Hryvinskyi\DataLayer\Model\Product\LineVariantResolver">
+        <arguments>
+            <argument name="strategies" xsi:type="array">
+                <item name="default" xsi:type="object">Hryvinskyi\DataLayer\Model\Product\Variant\OptionsVariant</item>
+                <item name="configurable" xsi:type="object">HryvinskyiDataLayerConfigurableVariant</item>
+                <item name="bundle" xsi:type="object">Hryvinskyi\DataLayer\Model\Product\Variant\BundleVariant</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- End of item pipeline -->
+
+    <!-- Product lists and promotions: the JSON data script a list carries after its own HTML, and the cache entry
+         that keeps it beside a block-cached block's own entry -->
+    <preference for="Hryvinskyi\DataLayerApi\Api\ListDataRendererInterface"
+                type="Hryvinskyi\DataLayer\Model\ListDataRenderer"/>
+    <preference for="Hryvinskyi\DataLayerApi\Api\BlockListDataInterface"
+                type="Hryvinskyi\DataLayer\Model\BlockListData"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Url\PathOfUrlInterface" type="Hryvinskyi\DataLayer\Model\Url\PathOfUrl"/>
+    <type name="Hryvinskyi\DataLayer\Model\ListDataRenderer">
+        <arguments>
+            <argument name="serializer" xsi:type="object">Magento\Framework\Serialize\Serializer\JsonHexTag</argument>
+        </arguments>
+    </type>
+    <!-- The data scripts' markup, and the start marker paired with a block's data scripts -->
+    <preference for="Hryvinskyi\DataLayer\Api\Browser\ListScriptMarkupInterface"
+                type="Hryvinskyi\DataLayer\Model\Browser\ListScriptMarkup"/>
+    <!-- End of product lists and promotions -->
+
+    <!-- Browser modules: the import map the storefront and admin ES modules resolve their named imports through -->
+    <preference for="Hryvinskyi\DataLayer\Api\Browser\ImportMapBuilderInterface"
+                type="Hryvinskyi\DataLayer\Model\Browser\ImportMapBuilder"/>
+    <type name="Hryvinskyi\DataLayer\Model\Browser\ImportMapBuilder">
+        <arguments>
+            <argument name="serializer" xsi:type="object">Magento\Framework\Serialize\Serializer\JsonHexTag</argument>
+        </arguments>
+    </type>
+    <!-- End of browser modules -->
+
+    <!-- Page events: view_item, view_cart, begin_checkout and purchase, built while the page renders from the page's
+         event sources. The view_cart and begin_checkout builders are named here for the sources that use them. The
+         purchase builder reads only the order and its store's settings, so order-level reporting outside a storefront
+         request reuses it. -->
+    <preference for="Hryvinskyi\DataLayer\Api\PageEventsInterface" type="Hryvinskyi\DataLayer\Model\PageEvents"/>
+    <preference for="Hryvinskyi\DataLayer\Api\PurchaseLedgerInterface"
+                type="Hryvinskyi\DataLayer\Model\PurchaseLedger"/>
+    <preference for="Hryvinskyi\DataLayer\Api\PurchasePageEventsInterface"
+                type="Hryvinskyi\DataLayer\Model\PageEvent\PurchasePageEvents"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Catalog\LineProductLoaderInterface"
+                type="Hryvinskyi\DataLayer\Model\Catalog\LineProductLoader"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Event\TransactionMoneyInterface"
+                type="Hryvinskyi\DataLayer\Model\Event\TransactionMoney"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Event\OrderItemSubjectsInterface"
+                type="Hryvinskyi\DataLayer\Model\Event\OrderItemSubjects"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Event\ViewItemEventBuilderInterface"
+                type="Hryvinskyi\DataLayer\Model\Event\ViewItemEventBuilder"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Event\PurchaseEventBuilderInterface"
+                type="Hryvinskyi\DataLayer\Model\Event\PurchaseEventBuilder"/>
+    <type name="Hryvinskyi\DataLayer\Model\PurchaseLedger">
+        <arguments>
+            <argument name="session" xsi:type="object">Hryvinskyi\DataLayer\Api\Session\VisitorSessionInterface\Proxy</argument>
+        </arguments>
+    </type>
+    <virtualType name="HryvinskyiDataLayerViewCartEventBuilder" type="Hryvinskyi\DataLayer\Model\Event\CartEventBuilder">
+        <arguments>
+            <argument name="eventName" xsi:type="string">view_cart</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="HryvinskyiDataLayerBeginCheckoutEventBuilder"
+                 type="Hryvinskyi\DataLayer\Model\Event\CartEventBuilder">
+        <arguments>
+            <argument name="eventName" xsi:type="string">begin_checkout</argument>
+        </arguments>
+    </virtualType>
+    <type name="Hryvinskyi\DataLayer\Model\PageEvent\PurchasePageEvents">
+        <arguments>
+            <argument name="purchaseBuilder" xsi:type="object">Hryvinskyi\DataLayer\Api\Event\PurchaseEventBuilderInterface</argument>
+        </arguments>
+    </type>
+    <!-- End of page events -->
+
+    <!-- Google Ads conversion: ads_conversion follows purchase on a success page, once per order through a ledger of
+         its own. Its value comes from the value source the store view picks, one source per code. Google Ads takes
+         conversions only from the page, so its channel is fixed to the browser. -->
+    <preference for="Hryvinskyi\DataLayer\Api\Data\ConversionValueInterface"
+                type="Hryvinskyi\DataLayer\Model\Data\ConversionValue"/>
+    <type name="Hryvinskyi\DataLayer\Model\Event\AdsConversionEventBuilder">
+        <arguments>
+            <argument name="valueSources" xsi:type="array">
+                <item name="purchase" xsi:type="object">Hryvinskyi\DataLayer\Model\Event\ConversionValue\PurchaseValue</item>
+                <item name="fixed" xsi:type="object">Hryvinskyi\DataLayer\Model\Event\ConversionValue\FixedValue</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="HryvinskyiDataLayerAdsConversionLedger" type="Hryvinskyi\DataLayer\Model\PurchaseLedger">
+        <arguments>
+            <argument name="session" xsi:type="object">Hryvinskyi\DataLayer\Api\Session\VisitorSessionInterface\Proxy</argument>
+            <argument name="key" xsi:type="string">reported_ads_conversions</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="HryvinskyiDataLayerAdsConversionPageEvents"
+                 type="Hryvinskyi\DataLayer\Model\PageEvent\PurchasePageEvents">
+        <arguments>
+            <argument name="purchaseBuilder" xsi:type="object">Hryvinskyi\DataLayer\Model\Event\AdsConversionEventBuilder</argument>
+            <argument name="ledger" xsi:type="object">HryvinskyiDataLayerAdsConversionLedger</argument>
+            <argument name="eventName" xsi:type="string">ads_conversion</argument>
+        </arguments>
+    </virtualType>
+    <type name="Hryvinskyi\DataLayer\Model\FixedChannels">
+        <arguments>
+            <argument name="channels" xsi:type="array">
+                <item name="ads_conversion" xsi:type="string">browser</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- End of Google Ads conversion -->
+
+    <!-- Settings migration from Magento's own Google modules: what each stored row becomes -->
+    <preference for="Hryvinskyi\DataLayer\Api\Migration\GoogleSettingsTranslatorInterface"
+                type="Hryvinskyi\DataLayer\Model\Migration\GoogleSettingsTranslator"/>
+
+    <!-- Server events: what the shopper does (cart, checkout steps, wish list, account) is built once and handed to
+         the event dispatcher; the browser's share waits in the visitor's session queue, announced through the
+         server-event signal, until the browser takes it. The checkout steps are saved through the storefront's REST
+         API, so their plugins are global; the other producers are storefront-only. -->
+    <preference for="Hryvinskyi\DataLayerApi\Api\ServerEventQueueInterface"
+                type="Hryvinskyi\DataLayer\Model\ServerEventQueue"/>
+    <preference for="Hryvinskyi\DataLayer\Api\ServerEventDrainInterface"
+                type="Hryvinskyi\DataLayer\Model\ServerEventQueue"/>
+    <!-- Without a module that delivers events to the browser nothing is signalled; such a module replaces the signal -->
+    <preference for="Hryvinskyi\DataLayer\Api\ServerEventSignalInterface"
+                type="Hryvinskyi\DataLayer\Model\NoServerEventSignal"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Session\VisitorSessionInterface"
+                type="Hryvinskyi\DataLayer\Model\Session\VisitorSession"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Event\EcommerceEventAssemblerInterface"
+                type="Hryvinskyi\DataLayer\Model\Event\EcommerceEventAssembler"/>
+    <!-- Event value: one rule over the reported items, for every event about a cart, a cart line or a product -->
+    <preference for="Hryvinskyi\DataLayer\Api\Event\ItemsValueInterface"
+                type="Hryvinskyi\DataLayer\Model\Event\ItemsValue"/>
+    <!-- Checkout step value: one cart value per checkout step value basis, picked by the cart's store view -->
+    <type name="Hryvinskyi\DataLayer\Model\Event\CheckoutStepValue">
+        <arguments>
+            <argument name="bases" xsi:type="array">
+                <item name="items" xsi:type="object">Hryvinskyi\DataLayer\Model\Event\CartValue\ItemsTotal</item>
+                <item name="grand_total" xsi:type="object">Hryvinskyi\DataLayer\Model\Event\CartValue\GrandTotal</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Hryvinskyi\DataLayer\Model\Event\AddShippingInfoEventBuilder">
+        <arguments>
+            <argument name="stepValue" xsi:type="object">Hryvinskyi\DataLayer\Model\Event\CheckoutStepValue</argument>
+        </arguments>
+    </type>
+    <type name="Hryvinskyi\DataLayer\Model\Event\AddPaymentInfoEventBuilder">
+        <arguments>
+            <argument name="stepValue" xsi:type="object">Hryvinskyi\DataLayer\Model\Event\CheckoutStepValue</argument>
+        </arguments>
+    </type>
+    <preference for="Hryvinskyi\DataLayer\Api\RegistrationInRequestInterface"
+                type="Hryvinskyi\DataLayer\Model\RegistrationInRequest"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Checkout\PaymentInfoLedgerInterface"
+                type="Hryvinskyi\DataLayer\Model\Checkout\PaymentInfoLedger"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Checkout\CheckoutStepReporterInterface"
+                type="Hryvinskyi\DataLayer\Model\Checkout\CheckoutStepReporter"/>
+    <preference for="Hryvinskyi\DataLayer\Api\Cart\CartQuantityChangeReporterInterface"
+                type="Hryvinskyi\DataLayer\Model\Cart\CartQuantityChangeReporter"/>
+    <!-- Cart kinds: a cart that is not a shopping cart reports the events its kind names in place of a shopping
+         cart's. A module registers its kind as an item of `kinds` on Hryvinskyi\DataLayer\Model\Cart\CartEventNaming;
+         with none, every cart is a shopping cart. -->
+    <preference for="Hryvinskyi\DataLayer\Api\Cart\CartEventNamingInterface"
+                type="Hryvinskyi\DataLayer\Model\Cart\CartEventNaming"/>
+    <!-- Re-priced cart lines: one shared instance per request, marked by the observers, read by the line figures -->
+    <preference for="Hryvinskyi\DataLayer\Api\Cart\RepricedLinesInterface"
+                type="Hryvinskyi\DataLayer\Model\Cart\RepricedLines"/>
+    <type name="Hryvinskyi\DataLayer\Model\Session\VisitorSession">
+        <arguments>
+            <argument name="session" xsi:type="object">HryvinskyiDataLayerSessionStorage</argument>
+        </arguments>
+    </type>
+    <!-- The session starts only when something is read or stored -->
+    <type name="Hryvinskyi\DataLayer\Model\ServerEventQueue">
+        <arguments>
+            <argument name="session" xsi:type="object">Hryvinskyi\DataLayer\Api\Session\VisitorSessionInterface\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Hryvinskyi\DataLayer\Model\Checkout\PaymentInfoLedger">
+        <arguments>
+            <argument name="session" xsi:type="object">Hryvinskyi\DataLayer\Api\Session\VisitorSessionInterface\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Hryvinskyi\DataLayer\Model\Cart\CartQuantityChangeReporter">
+        <arguments>
+            <argument name="addToCart" xsi:type="object">Hryvinskyi\DataLayer\Model\Event\AddToCartEventBuilder</argument>
+            <argument name="removeFromCart" xsi:type="object">Hryvinskyi\DataLayer\Model\Event\RemoveFromCartEventBuilder</argument>
+        </arguments>
+    </type>
+    <type name="Hryvinskyi\DataLayer\Model\Checkout\CheckoutStepReporter">
+        <arguments>
+            <argument name="shippingInfo" xsi:type="object">Hryvinskyi\DataLayer\Model\Event\AddShippingInfoEventBuilder</argument>
+            <argument name="paymentInfo" xsi:type="object">Hryvinskyi\DataLayer\Model\Event\AddPaymentInfoEventBuilder</argument>
+        </arguments>
+    </type>
+    <type name="Hryvinskyi\DataLayer\Observer\ReportWishlistAddition">
+        <arguments>
+            <argument name="builder" xsi:type="object">Hryvinskyi\DataLayer\Model\Event\AddToWishlistEventBuilder</argument>
+        </arguments>
+    </type>
+    <type name="Hryvinskyi\DataLayer\Observer\ReportLogin">
+        <arguments>
+            <argument name="builder" xsi:type="object">Hryvinskyi\DataLayer\Model\Event\LoginEventBuilder</argument>
+        </arguments>
+    </type>
+    <type name="Hryvinskyi\DataLayer\Observer\ReportSignUp">
+        <arguments>
+            <argument name="builder" xsi:type="object">Hryvinskyi\DataLayer\Model\Event\SignUpEventBuilder</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Checkout\Api\ShippingInformationManagementInterface">
+        <plugin name="hryvinskyi_datalayer_shipping_step"
+                type="Hryvinskyi\DataLayer\Plugin\Checkout\ShippingInformationPlugin"/>
+    </type>
+    <type name="Magento\Checkout\Api\PaymentInformationManagementInterface">
+        <plugin name="hryvinskyi_datalayer_payment_step"
+                type="Hryvinskyi\DataLayer\Plugin\Checkout\PaymentInformationPlugin"/>
+    </type>
+    <type name="Magento\Checkout\Api\GuestPaymentInformationManagementInterface">
+        <plugin name="hryvinskyi_datalayer_payment_step"
+                type="Hryvinskyi\DataLayer\Plugin\Checkout\GuestPaymentInformationPlugin"/>
+    </type>
+    <!-- End of server events -->
+</config>

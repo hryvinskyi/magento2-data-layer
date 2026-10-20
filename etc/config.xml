@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2026. Volodymyr Hryvinskyi. All rights reserved.
+ * Author: Volodymyr Hryvinskyi <volodymyr@hryvinskyi.com>
+ * GitHub: https://github.com/hryvinskyi
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <hryvinskyi_datalayer>
+            <general>
+                <enabled>0</enabled>
+            </general>
+            <gtm>
+                <script_host>www.googletagmanager.com</script_host>
+            </gtm>
+            <events>
+                <disabled/>
+            </events>
+            <item>
+                <identifier_attribute>sku</identifier_attribute>
+                <hidden_price_handling>omit_price</hidden_price_handling>
+                <catalogue_price_includes_tax>0</catalogue_price_includes_tax>
+                <line_price_includes_tax>0</line_price_includes_tax>
+            </item>
+            <!-- What a checkout step's value is: the items' value, like every other cart event -->
+            <checkout>
+                <step_value_basis>items</step_value_basis>
+            </checkout>
+            <purchase>
+                <value_basis>grand_total</value_basis>
+                <deduct_tax>0</deduct_tax>
+                <include_tax>1</include_tax>
+                <include_shipping>1</include_shipping>
+            </purchase>
+            <lists>
+                <impression_trigger>load</impression_trigger>
+            </lists>
+            <!-- Google tag (gtag.js) and the Google Ads conversion: nothing is loaded or reported until a store view
+                 sets its own ids -->
+            <gtag>
+                <measurement_id/>
+            </gtag>
+            <ads>
+                <enabled>0</enabled>
+                <conversion_id/>
+                <conversion_label/>
+                <value_source>purchase</value_source>
+                <fixed_value/>
+            </ads>
+        </hryvinskyi_datalayer>
+    </default>
+</config>

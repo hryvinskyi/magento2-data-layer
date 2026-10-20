@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2026. Volodymyr Hryvinskyi. All rights reserved.
+ * Author: Volodymyr Hryvinskyi <volodymyr@hryvinskyi.com>
+ * GitHub: https://github.com/hryvinskyi
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <!-- Cart line changes made through the storefront's REST API, reported as they are on the storefront: the
+         server channel works here, and the browser queue only where the request has a session -->
+    <event name="sales_quote_product_add_after">
+        <observer name="hryvinskyi_datalayer_report_added_cart_lines"
+                  instance="Hryvinskyi\DataLayer\Observer\ReportAddedCartLines"/>
+    </event>
+    <event name="sales_quote_remove_item">
+        <observer name="hryvinskyi_datalayer_report_removed_cart_line"
+                  instance="Hryvinskyi\DataLayer\Observer\ReportRemovedCartLine"/>
+    </event>
+    <!-- End of cart line changes -->
+</config>

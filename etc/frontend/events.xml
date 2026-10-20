@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2026. Volodymyr Hryvinskyi. All rights reserved.
+ * Author: Volodymyr Hryvinskyi <volodymyr@hryvinskyi.com>
+ * GitHub: https://github.com/hryvinskyi
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <!-- Server events: what the shopper does on the storefront, reported through the event dispatcher -->
+    <event name="sales_quote_product_add_after">
+        <observer name="hryvinskyi_datalayer_report_added_cart_lines"
+                  instance="Hryvinskyi\DataLayer\Observer\ReportAddedCartLines"/>
+    </event>
+    <event name="sales_quote_remove_item">
+        <observer name="hryvinskyi_datalayer_report_removed_cart_line"
+                  instance="Hryvinskyi\DataLayer\Observer\ReportRemovedCartLine"/>
+    </event>
+    <event name="wishlist_add_product">
+        <observer name="hryvinskyi_datalayer_report_wishlist_addition"
+                  instance="Hryvinskyi\DataLayer\Observer\ReportWishlistAddition"/>
+    </event>
+    <event name="customer_register_success">
+        <observer name="hryvinskyi_datalayer_report_sign_up" instance="Hryvinskyi\DataLayer\Observer\ReportSignUp"/>
+    </event>
+    <event name="customer_login">
+        <observer name="hryvinskyi_datalayer_report_login" instance="Hryvinskyi\DataLayer\Observer\ReportLogin"/>
+    </event>
+    <!-- End of server events -->
+</config>
