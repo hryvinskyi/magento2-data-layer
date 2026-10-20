@@ -3,7 +3,7 @@ title: GA4 Data Layer
 module: Hryvinskyi_DataLayer
 doc-type: User Guide
 lede: GA4 ecommerce tracking for Magento 2 through Google Tag Manager or gtag.js, with optional server-side delivery and a guided setup wizard.
-version: 1.0.0
+version: 1.0.2
 magento: 2.4.8
 php: 8.3
 published: 2026-10-20
