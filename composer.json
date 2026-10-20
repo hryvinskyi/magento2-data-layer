@@ -2,7 +2,7 @@
     "name": "hryvinskyi/magento2-data-layer",
     "description": "GA4 ecommerce data layer for Google Tag Manager: settings, events built on the server and while pages render, the item pipeline, product list data, the browser and server delivery channels.",
     "type": "magento2-module",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "license": "MIT",
     "authors": [
         {

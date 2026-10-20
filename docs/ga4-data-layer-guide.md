@@ -518,7 +518,7 @@ This step is present when the server-side modules are installed. *"Sends selecte
 | | **Region** | Measurement Protocol only: *Global* or *EU only*. |
 | | **Endpoint** / **API secret (optional)** | Server-side Tag Manager only: the container's https address with no path, and its own secret if it asks for one. |
 | Identity | **Send customer ID as user_id** | Signed-in customers only. |
-| | **Keep a first-party visitor ID when GA's cookie is blocked** | See section 7. |
+| | **Keep a first-party visitor ID** | Used when GA's cookie is blocked. See section 7. |
 | | **Keep visitor IDs for (days)** | 30 to 1000. |
 | Orders | **Send purchase when** | *The order is paid (invoice)* or *The order is placed*. Paid leaves out unpaid orders; placed reports sooner. |
 | Delivery | **Debug mode** | When on: *"Debug mode is on: events go to Google's validation endpoint and are NOT recorded in GA4."* |
@@ -651,7 +651,7 @@ Added by the server-side modules. Default and website scope only.
 | Server-side Tag Manager | **Endpoint** | `hryvinskyi_datalayer_server/sgtm/endpoint` | *(empty)* | `https://host[:port]`, no path or query, a public address. |
 | | **API secret (optional)** | `hryvinskyi_datalayer_server/sgtm/api_secret` | *(empty)* | Only when your server container asks for one. Never the GA4 secret. |
 | Identity | **Send customer ID as user_id** | `hryvinskyi_datalayer_server/identity/send_user_id` | No | Signed-in customers only. |
-| | **Keep a first-party visitor ID when GA's cookie is blocked** | `hryvinskyi_datalayer_server/identity/fallback_cookie` | Yes | Without it, visitors who block Google Analytics arrive as new users each time. |
+| | **Keep a first-party visitor ID** | `hryvinskyi_datalayer_server/identity/fallback_cookie` | Yes | Without it, visitors who block Google Analytics arrive as new users each time. |
 | | **Keep visitor IDs for (days)** | `hryvinskyi_datalayer_server/identity/retention_days` | 400 | 30 to 1000. |
 | Orders | **Send purchase when** | `hryvinskyi_datalayer_server/orders/purchase_trigger` | `paid` | The order is paid (invoice) · The order is placed |
 | Consent | *(notice)* | — | — | Consent is not checked yet: server events are sent whatever the visitor chose. |
