@@ -9,31 +9,30 @@ declare(strict_types=1);
 
 namespace Hryvinskyi\DataLayer\Model\ItemField;
 
-use Hryvinskyi\DataLayer\Api\Catalog\OptionLabelReaderInterface;
+use Hryvinskyi\DataLayer\Api\Catalog\AttributeTextReaderInterface;
 use Hryvinskyi\DataLayer\Api\ConfigInterface;
 use Hryvinskyi\DataLayer\Api\ItemField\ProductAttributeValuesInterface;
 use Hryvinskyi\DataLayerApi\Api\ItemFieldProviderInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
 
 /**
- * Fills `item_brand` with the store labels of the product's options of the store's brand attribute
+ * Fills `item_brand` with the text of the product's value of the store's brand attribute
  *
- * Nothing is done for a store view without a brand attribute. The option ids of all products are read at once (or
- * taken from the loaded products) and their labels in one go; several options are joined with a comma.
+ * Nothing is done for a store view without a brand attribute. The values of all products are read at once (or taken
+ * from the loaded products) and turned into text in one go: an option attribute gives its option labels, joined with
+ * a comma, and a text attribute gives the text it holds.
  */
 class BrandProvider implements ItemFieldProviderInterface
 {
-    private const SEPARATOR = ', ';
-
     /**
      * @param ConfigInterface $config
      * @param ProductAttributeValuesInterface $attributeValues
-     * @param OptionLabelReaderInterface $optionLabels
+     * @param AttributeTextReaderInterface $attributeTexts
      */
     public function __construct(
         private readonly ConfigInterface $config,
         private readonly ProductAttributeValuesInterface $attributeValues,
-        private readonly OptionLabelReaderInterface $optionLabels
+        private readonly AttributeTextReaderInterface $attributeTexts
     ) {
     }
 
@@ -80,37 +79,10 @@ class BrandProvider implements ItemFieldProviderInterface
      */
     private function brands(array $products, string $attributeCode, int $storeId): array
     {
-        $optionIds = [];
-        foreach ($this->attributeValues->values($products, $attributeCode, $storeId) as $productId => $value) {
-            $optionIds[$productId] = array_values(array_filter(
-                array_map('trim', explode(',', $value)),
-                static fn (string $optionId): bool => $optionId !== ''
-            ));
-        }
-        if ($optionIds === []) {
-            return [];
-        }
-
-        $labels = $this->optionLabels->labels(
+        return $this->attributeTexts->texts(
             $attributeCode,
-            array_values(array_unique(array_merge(...array_values($optionIds)))),
+            $this->attributeValues->values($products, $attributeCode, $storeId),
             $storeId
         );
-
-        $brands = [];
-        foreach ($optionIds as $productId => $ids) {
-            $names = [];
-            foreach ($ids as $optionId) {
-                $label = trim($labels[$optionId] ?? '');
-                if ($label !== '') {
-                    $names[] = $label;
-                }
-            }
-            if ($names !== []) {
-                $brands[$productId] = implode(self::SEPARATOR, $names);
-            }
-        }
-
-        return $brands;
     }
 }

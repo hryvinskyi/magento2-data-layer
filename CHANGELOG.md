@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2026-10-22
+
+### Added
+
+- `Api\Catalog\AttributeTextReaderInterface`: turns an attribute's stored values into the text a shopper reads. The reader is chosen by the attribute's input type from the `readers` argument of `Model\Catalog\AttributeTextReader`; dropdown and multiselect give their option labels, any other input its stored value.
+
+### Fixed
+
+- `item_brand` is sent from a text brand attribute: the text it holds is the brand. Only option attributes gave a brand before.
+
+### Changed
+
+- User guide and User Manual: the brand attribute may be a text, dropdown or multiselect attribute. PDF, DOCX and DOC are now `docs/Hryvinskyi_DataLayer-user-guide-1.0.4.*` and `docs/Hryvinskyi_DataLayer-user-manual-1.0.4.*`.
+
 ## [1.0.3] - 2026-10-20
 
 ### Added

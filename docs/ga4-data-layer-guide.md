@@ -3,10 +3,10 @@ title: GA4 Data Layer
 module: Hryvinskyi_DataLayer
 doc-type: User Guide
 lede: GA4 ecommerce tracking for Magento 2 through Google Tag Manager or gtag.js, with optional server-side delivery and a guided setup wizard.
-version: 1.0.3
+version: 1.0.4
 magento: 2.4.8
 php: 8.3
-published: 2026-10-20
+published: 2026-10-22
 publisher: Hryvinskyi
 ---
 
@@ -199,7 +199,7 @@ Every item in every event is built by the same pipeline:
 | `price` | Rounded to two decimals, on the tax basis below. |
 | `quantity` | The line quantity; 1 on product pages and in lists. |
 | `item_variant` | Cart and order lines only, for example `Colour: Olive`. |
-| `item_brand` | The attribute chosen in *Items › Brand attribute*; not sent when none is chosen. |
+| `item_brand` | The attribute chosen in *Items › Brand attribute*: the option label of a dropdown or multiselect, the text of a text attribute; not sent when none is chosen. |
 | `item_category` … `item_category5` | One active category path under the store's root, top level first. On a category page the current category is preferred. |
 | `item_list_id`, `item_list_name`, `index` | Items in lists; `index` counts from 0. |
 | `discount` | Per unit, on cart and order lines, only when there is a discount. |
@@ -478,7 +478,7 @@ At a scope that inherits the events, the reason is shown above the presets and t
 | Card | Setting | What it does |
 | --- | --- | --- |
 | Product data | **Item ID attribute** | What GA4 receives as `item_id`: Product ID, SKU or another text attribute. |
-| | **Brand attribute** | Fills `item_brand` from a dropdown or multiselect attribute; *— Not sent —* by default. |
+| | **Brand attribute** | Fills `item_brand` from a text, dropdown or multiselect attribute; *— Not sent —* by default. |
 | Prices and tax | **Catalogue prices include tax** | Yes: product and list prices are sent with tax. |
 | | **Cart and order prices include tax** | Yes: cart, checkout and order prices are sent with tax. |
 | | **When a price is hidden from the visitor** | *Send the event without prices* or *Do not send ecommerce events*, for customer groups that may not see prices. |
@@ -610,7 +610,7 @@ One **Use Default** / **Use Website** checkbox covers both paths. The table warn
 | Setting | Path | Default | Options |
 | --- | --- | --- | --- |
 | **Item ID attribute** | `hryvinskyi_datalayer/item/identifier_attribute` | `sku` | Product ID, or any text attribute |
-| **Brand attribute** | `hryvinskyi_datalayer/item/brand_attribute` | *(not sent)* | Any dropdown or multiselect attribute |
+| **Brand attribute** | `hryvinskyi_datalayer/item/brand_attribute` | *(not sent)* | Any text, dropdown or multiselect attribute |
 | **When a price is hidden from the visitor** | `hryvinskyi_datalayer/item/hidden_price_handling` | `omit_price` | Send the event without prices · Do not send ecommerce events |
 | **Catalogue prices include tax** | `hryvinskyi_datalayer/item/catalogue_price_includes_tax` | No | Yes / No |
 | **Cart and order prices include tax** | `hryvinskyi_datalayer/item/line_price_includes_tax` | No | Yes / No |

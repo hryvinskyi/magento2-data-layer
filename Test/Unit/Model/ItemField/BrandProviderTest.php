@@ -9,12 +9,14 @@ declare(strict_types=1);
 
 namespace Hryvinskyi\DataLayer\Test\Unit\Model\ItemField;
 
+use Hryvinskyi\DataLayer\Model\Catalog\AttributeText\OptionLabelText;
+use Hryvinskyi\DataLayer\Model\Catalog\AttributeText\StoredText;
 use Hryvinskyi\DataLayer\Model\ItemField\BrandProvider;
 use Hryvinskyi\DataLayer\Model\ItemField\ProductAttributeValues;
 use PHPUnit\Framework\TestCase;
 
 /**
- * The brand is the label of the product's brand option, read in one call per concern for every product
+ * The brand is the text of the product's brand value, read in one call per concern for every product
  */
 class BrandProviderTest extends TestCase
 {
@@ -31,7 +33,7 @@ class BrandProviderTest extends TestCase
     {
         $values = new FakeAttributeValueReader(['manufacturer' => [1 => '10']]);
         $labels = new FakeOptionLabelReader([10 => 'Acme']);
-        $provider = new BrandProvider($this->settings(), new ProductAttributeValues($values), $labels);
+        $provider = new BrandProvider($this->settings(), new ProductAttributeValues($values), new OptionLabelText($labels));
 
         self::assertSame([], $provider->provide([$this->subject($this->product(1))], 'view_item'));
         self::assertSame([], $values->calls);
@@ -47,7 +49,7 @@ class BrandProviderTest extends TestCase
     {
         $values = new FakeAttributeValueReader(['manufacturer' => [1 => '10', 2 => '11,12', 3 => '10']]);
         $labels = new FakeOptionLabelReader([10 => 'Acme', 11 => 'Globex', 12 => 'Initech']);
-        $provider = new BrandProvider($this->settings(self::BRAND), new ProductAttributeValues($values), $labels);
+        $provider = new BrandProvider($this->settings(self::BRAND), new ProductAttributeValues($values), new OptionLabelText($labels));
 
         $fields = $provider->provide(
             [
@@ -82,12 +84,40 @@ class BrandProviderTest extends TestCase
     {
         $values = new FakeAttributeValueReader();
         $labels = new FakeOptionLabelReader([10 => 'Acme']);
-        $provider = new BrandProvider($this->settings(self::BRAND), new ProductAttributeValues($values), $labels);
+        $provider = new BrandProvider($this->settings(self::BRAND), new ProductAttributeValues($values), new OptionLabelText($labels));
 
         self::assertSame(
             [0 => ['item_brand' => 'Acme']],
             $provider->provide([$this->subject($this->product(1, 'A', ['manufacturer' => '10']))], 'view_item')
         );
         self::assertSame([], $values->calls);
+    }
+
+    /**
+     * A text brand attribute gives the text each product holds, trimmed, read in one call
+     *
+     * @return void
+     */
+    public function testTextAttributeGivesTheStoredText(): void
+    {
+        $values = new FakeAttributeValueReader(['saf_brand' => [1 => 'Auraglow', 2 => ' Artis ', 3 => '  ']]);
+        $provider = new BrandProvider(
+            $this->settings(['hryvinskyi_datalayer/item/brand_attribute' => 'saf_brand']),
+            new ProductAttributeValues($values),
+            new StoredText()
+        );
+
+        self::assertSame(
+            [0 => ['item_brand' => 'Auraglow'], 1 => ['item_brand' => 'Artis']],
+            $provider->provide(
+                [
+                    $this->subject($this->product(1)),
+                    $this->subject($this->product(2)),
+                    $this->subject($this->product(3)),
+                ],
+                'view_item_list'
+            )
+        );
+        self::assertCount(1, $values->calls);
     }
 }

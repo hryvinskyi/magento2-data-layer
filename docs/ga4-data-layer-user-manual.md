@@ -3,10 +3,10 @@ title: GA4 Data Layer
 module: Hryvinskyi_DataLayer
 doc-type: User Manual
 lede: Step-by-step tasks for shop staff to switch on GA4 tracking, choose what is sent, send purchases from the server and check that Google receives them.
-version: 1.0.3
+version: 1.0.4
 magento: 2.4.8
 php: 8.3
-published: 2026-10-20
+published: 2026-10-22
 publisher: Hryvinskyi
 ---
 
@@ -111,7 +111,7 @@ This step decides which product data and prices GA4 receives. The preview on the
 
 1. Under **Product data**:
    - **Item ID attribute**: what GA4 receives as `item_id`. **SKU (sku)** is the default. Choose the identifier your marketing team uses for products.
-   - **Brand attribute**: the product attribute that holds the brand, for example **Manufacturer (manufacturer)**. Leave **— Not sent —** if you do not track brands.
+   - **Brand attribute**: the product attribute that holds the brand, a dropdown such as **Manufacturer (manufacturer)** or a text field. Leave **— Not sent —** if you do not track brands.
 2. Under **Prices and tax**:
    - **Catalogue prices include tax**: **Yes** sends product and list prices with tax.
    - **Cart and order prices include tax**: **Yes** sends cart, checkout and order prices with tax.

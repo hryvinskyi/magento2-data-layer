@@ -280,6 +280,19 @@
                 type="Hryvinskyi\DataLayer\Model\Catalog\AttributeValueReader"/>
     <preference for="Hryvinskyi\DataLayer\Api\Catalog\OptionLabelReaderInterface"
                 type="Hryvinskyi\DataLayer\Model\Catalog\OptionLabelReader"/>
+    <!-- Attribute text by input type: an option attribute gives its option labels, any other input its stored value.
+         A module adds an input type by merging one item, keyed by the frontend input, into `readers`. -->
+    <preference for="Hryvinskyi\DataLayer\Api\Catalog\AttributeTextReaderInterface"
+                type="Hryvinskyi\DataLayer\Model\Catalog\AttributeTextReader"/>
+    <type name="Hryvinskyi\DataLayer\Model\Catalog\AttributeTextReader">
+        <arguments>
+            <argument name="defaultReader" xsi:type="object">Hryvinskyi\DataLayer\Model\Catalog\AttributeText\StoredText</argument>
+            <argument name="readers" xsi:type="array">
+                <item name="select" xsi:type="object">Hryvinskyi\DataLayer\Model\Catalog\AttributeText\OptionLabelText</item>
+                <item name="multiselect" xsi:type="object">Hryvinskyi\DataLayer\Model\Catalog\AttributeText\OptionLabelText</item>
+            </argument>
+        </arguments>
+    </type>
     <preference for="Hryvinskyi\DataLayer\Api\Catalog\CategoryTreeSnapshotInterface"
                 type="Hryvinskyi\DataLayer\Model\Catalog\CachedCategoryTreeSnapshot"/>
     <!-- Same class, so the shared instance whose in-request trees the observer empties is the one readers ask -->
